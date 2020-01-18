@@ -15,7 +15,6 @@ class SplashActivity : AppCompatActivity() {
 
     private val DEBUG_TAG = "Splash Activity"
     private val permissions = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
 
@@ -29,6 +28,7 @@ class SplashActivity : AppCompatActivity() {
     private fun start_app() {
         Handler().postDelayed(Runnable(){
             startActivity(Intent(this, MainActivity::class.java))
+            finish()
         }, 2000)
     }
 
@@ -64,6 +64,7 @@ class SplashActivity : AppCompatActivity() {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Log.i(DEBUG_TAG, "Permission has been denied by user")
+                    finish()
                 }
                 return
             }
