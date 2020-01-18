@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BettingService</string>
+
+    <string name="all_in">- \"All in\"</string>
 </resources>
