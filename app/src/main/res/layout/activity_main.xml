@@ -9,7 +9,7 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/chipImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxHeight="200dp"
@@ -32,16 +32,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nameInputEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -51,13 +52,13 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
         <Button
-            android:id="@+id/create"
+            android:id="@+id/createButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="CREATE" />
 
         <Button
-            android:id="@+id/join"
+            android:id="@+id/joinButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="JOIN" />
