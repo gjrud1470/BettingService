@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">BettingService</string>
-  
+
     <string name="app_title">배팅 관리자</string>
-    <string name="name_editText_hint"><font size = "25">이름</font></string>
+    <string name="name_editText_hint"><font size="25">이름</font></string>
     <string name="all_in">- \"All in\"</string>
 
 </resources>
