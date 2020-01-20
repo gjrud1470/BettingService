@@ -5,6 +5,4 @@
     <string name="name_editText_hint"><font size="25">이름</font></string>
     <string name="all_in">- \"All in\"</string>
 
-    <string name="game_name">방이름</string>
-
 </resources>
