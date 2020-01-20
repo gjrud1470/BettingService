@@ -4,24 +4,71 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.MadWeek2.RoomRecyclerAdapter
 import com.example.bettingservice.R
 import com.example.bettingservice.userName
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import kotlinx.android.synthetic.main.activity_host_room.*
+
+class Player {
+    private var endpointId: String? = null
+    private var name: String? = null
+    private var initial_budget: Int? = null
+
+    fun getId(): String? {
+        return endpointId
+    }
+
+    fun setId(id: String) {
+        endpointId = id
+    }
+
+    fun getname(): String? {
+        return name
+    }
+
+    fun setname(new_name: String) {
+        name = new_name
+    }
+
+    fun getbudget(): Int? {
+        return initial_budget
+    }
+
+    fun setbudget(budget: Int) {
+        initial_budget = budget
+    }
+}
 
 class HostRoomActivity : AppCompatActivity() {
 
     val TAG = "HostRoomActivity"
 
+    // Define global mutable variables
+    lateinit var RoomRecyclerView: RecyclerView
+    private lateinit var viewAdapter: RoomRecyclerAdapter
+    private lateinit var viewManager: RecyclerView.LayoutManager
+
+    var room_name: String = ""
+    var player_number = 0
+    var betting_rounds = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_room)
 
+        room_name = intent.getStringExtra("room_name")!!
+        player_number = intent.getIntExtra("player_number", 1)
+        betting_rounds = intent.getIntExtra("betting_rounds", 1)
+
         val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_CLUSTER)
-                .build()
+            .build()
         Nearby.getConnectionsClient(this)
             .startAdvertising(
-                userName,
+                room_name,
                 "com.example.bettingservice",
                 connCallback,
                 options
@@ -32,24 +79,30 @@ class HostRoomActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Log.wtf(TAG, "failue")
             }
+
+        viewAdapter = RoomRecyclerAdapter(this, arrayListOf<Player>())
+        viewManager = LinearLayoutManager(this)
+        RoomRecyclerView = player_list.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
     }
 
 
     val connCallback = object : ConnectionLifecycleCallback() {
 
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
-            AlertDialog.Builder(this@HostRoomActivity)
-                .setTitle(connectionInfo.endpointName + "님과 연결하겠습니까?")
-                .setMessage("토큰이 일치하는지 확인해주세요\n" + connectionInfo.authenticationToken)
-                .setPositiveButton("연결") { _, _ ->
-                    Nearby.getConnectionsClient(this@HostRoomActivity)
-                        .acceptConnection(endpointId, payloadCallback)
-                }
-                .setNegativeButton("거부") { _, _ ->
-                    Nearby.getConnectionsClient(this@HostRoomActivity)
-                        .rejectConnection(endpointId)
-                }
-                .show()
+            if (viewAdapter.itemCount < player_number) {
+                val player = Player()
+                player.setId(endpointId)
+                player.setname(connectionInfo.endpointName)
+                player.setbudget(0)
+                viewAdapter.addItem(player)
+            } else {
+                Nearby.getConnectionsClient(this@HostRoomActivity)
+                    .rejectConnection(endpointId)
+            }
         }
 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {

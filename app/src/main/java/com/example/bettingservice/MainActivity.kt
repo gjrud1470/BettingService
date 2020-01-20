@@ -1,32 +1,24 @@
 package com.example.bettingservice
 
 import com.example.bettingservice.client.RoomsActivity
-import android.content.DialogInterface
 import android.content.Intent
-import android.nfc.Tag
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.bettingservice.Host.HostRoomActivity
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.github.javiersantos.materialstyleddialogs.enums.Style
-import com.google.android.gms.nearby.Nearby
-import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.create_game_layout.*
 
 var userName : String = ""
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "NearbyConnection"
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +72,11 @@ class MainActivity : AppCompatActivity() {
 
                         else {
                             //Start Receiving Player Activity
-                            startActivity(Intent(this, HostRoomActivity::class.java))
+                            val intent = Intent(this, HostRoomActivity::class.java)
+                            intent.putExtra("room_name", input_room_name.text.toString())
+                            intent.putExtra("player_number", input_player_number.text.toString().toInt())
+                            intent.putExtra("betting_rounds", input_betting_round.text.toString().toInt())
+                            startActivity(intent)
                         }
                     })
                 .onNegative { dialog, _ ->

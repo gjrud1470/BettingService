@@ -9,4 +9,8 @@
     <color name="text_background">#80686868</color>
     <color name="text_gray">#B1B1B1</color>
     <color name="header_color">#1A7404</color>
+
+    <color name="button">#636F5C</color>
+    <color name="accept">#4CAF50</color>
+    <color name="reject">#FF5A5A</color>
 </resources>
