@@ -165,8 +165,11 @@
         app:layout_constraintTop_toBottomOf="@id/card_view" />
 
     <Button
+        android:id="@+id/start_game_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@color/button"
         android:text="START GAME"
         android:textSize="32sp"
         android:layout_margin="20dp"

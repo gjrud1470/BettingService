@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
@@ -22,7 +24,6 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import kotlinx.android.synthetic.main.player_item_host.view.*
 import java.util.*
-import kotlin.random.Random
 
 
 class RoomRecyclerAdapter(
@@ -32,7 +33,7 @@ class RoomRecyclerAdapter(
     RecyclerView.Adapter<RoomRecyclerAdapter.MyViewHolder>() {
 
     private var mContext: Context = context
-    private var player_list = list
+    var player_list = list
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         init {
@@ -46,6 +47,9 @@ class RoomRecyclerAdapter(
 
                 accept_button.visibility = View.GONE
                 reject_button.visibility = View.GONE
+                itemView.findViewById<TextView>(R.id.budget_text).visibility = View.VISIBLE
+                itemView.findViewById<TextView>(R.id.initial_budget).visibility = View.VISIBLE
+                itemView.findViewById<ImageView>(R.id.drag_handle).visibility = View.VISIBLE
                 notifyItemChanged(position)
             }
             reject_button.setOnClickListener {

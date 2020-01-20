@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_host_room.*
 class Player {
     private var endpointId: String? = null
     private var name: String? = null
-    private var initial_budget: Int? = null
+    private var budget: Int? = null
 
     fun getId(): String? {
         return endpointId
@@ -35,11 +35,11 @@ class Player {
     }
 
     fun getbudget(): Int? {
-        return initial_budget
+        return budget
     }
 
-    fun setbudget(budget: Int) {
-        initial_budget = budget
+    fun setbudget(new_budget: Int) {
+        budget = new_budget
     }
 }
 
