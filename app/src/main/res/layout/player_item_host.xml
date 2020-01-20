@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -14,71 +14,98 @@
         app:cardCornerRadius="10dp"
         android:id="@+id/card_view">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:orientation="horizontal" >
+            android:padding="10dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/player_name"
-                android:layout_gravity="center_vertical"
-                android:text="Your Name"
-                android:textColor="@android:color/white"
-                android:textSize="22sp"
-                app:fontFamily="@font/nanumgothicbold" />
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/accept_player">
 
-            <TextView
-                android:id="@+id/budget_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:text="자금: "
-                android:textColor="@color/text_gray"
-                android:textSize="18sp"
-                android:visibility="gone"
-                app:fontFamily="@font/nanumgothicbold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/player_name"
+                    android:layout_gravity="center_vertical"
+                    android:text="Your Name"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
+                    app:fontFamily="@font/nanumgothicbold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"/>
 
-            <TextView
-                android:id="@+id/initial_budget"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/text_gray"
-                android:text="0"
-                android:textSize="22sp"
-                android:visibility="gone"
-                app:fontFamily="@font/nanumgothicbold" />
+                <TextView
+                    android:id="@+id/budget_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="자금: "
+                    android:textColor="@color/text_gray"
+                    android:textSize="18sp"
+                    android:visibility="gone"
+                    app:fontFamily="@font/nanumgothicbold"
+                    app:layout_constraintBottom_toBottomOf="@+id/player_name"
+                    app:layout_constraintLeft_toRightOf="@+id/player_name"/>
 
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/initial_budget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/text_gray"
+                    android:text="0"
+                    android:textSize="22sp"
+                    android:visibility="gone"
+                    app:fontFamily="@font/nanumgothicbold"
+                    app:layout_constraintBottom_toBottomOf="@+id/budget_text"
+                    app:layout_constraintLeft_toRightOf="@+id/budget_text"/>
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/accept_player"
                 android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_marginStart="10dp"
                 android:background="@color/accept"
                 android:text="수락"
                 android:textSize="16sp"
-                app:fontFamily="@font/nanumgothicextrabold" />
+                app:fontFamily="@font/nanumgothicextrabold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/space"/>
+
+            <Space
+                android:id="@+id/space"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/reject_player"/>
 
             <Button
                 android:id="@+id/reject_player"
                 android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_marginStart="10dp"
                 android:background="@color/reject"
                 android:text="거절"
                 android:textSize="16sp"
-                app:fontFamily="@font/nanumgothicextrabold" />
+                app:fontFamily="@font/nanumgothicextrabold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
             android:id="@+id/drag_handle"

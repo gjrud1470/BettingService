@@ -39,6 +39,7 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
             hostId = it
             Nearby.getConnectionsClient(this@RoomsActivity)
                 .requestConnection(userName, it, connCallback)
+            Log.wtf("WTF", userName)
         }
 
         recyclerView.adapter = adapter
