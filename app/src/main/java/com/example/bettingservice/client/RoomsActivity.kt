@@ -37,9 +37,9 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
             Nearby.getConnectionsClient(this@RoomsActivity).stopDiscovery()
             loading.visibility = View.VISIBLE
             hostId = it
+            Log.wtf("WTF", "hi ${userName}")
             Nearby.getConnectionsClient(this@RoomsActivity)
                 .requestConnection(userName, it, connCallback)
-            Log.wtf("WTF", userName)
         }
 
         recyclerView.adapter = adapter

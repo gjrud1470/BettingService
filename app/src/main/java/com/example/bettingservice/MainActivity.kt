@@ -92,6 +92,8 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            userName = nameInputEditText.text.toString()
+
             startActivity(Intent(this, RoomsActivity::class.java))
             finish()
         }
