@@ -12,8 +12,9 @@ import com.example.bettingservice.userName
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_host_room.*
+import java.io.Serializable
 
-class Player {
+class Player : Serializable {
     private var endpointId: String? = null
     private var name: String? = null
     private var budget: Int? = null

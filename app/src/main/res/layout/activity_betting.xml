@@ -13,6 +13,24 @@
         android:layout_height="50dp"
         android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="제목"
+            android:textSize="30dp"/>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/settingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@drawable/ic_setting_white" />
 
     </LinearLayout>
 
@@ -104,15 +122,18 @@
         <Button
             android:id="@+id/call"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="CALL"/>
         <Button
             android:id="@+id/raise"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="RAISE" />
         <Button
             android:id="@+id/fold"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="FOLD" />
     </LinearLayout>
 
 </RelativeLayout>
