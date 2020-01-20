@@ -1,17 +1,26 @@
 package com.example.bettingservice.Host
 
+import android.app.Dialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.MadWeek2.RoomRecyclerAdapter
 import com.example.bettingservice.R
 import com.example.bettingservice.userName
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
+import com.github.javiersantos.materialstyleddialogs.enums.Style
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.activity_host_room.*
 import java.io.Serializable
 
@@ -105,7 +114,20 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(viewAdapter))
         itemTouchHelper!!.attachToRecyclerView(RoomRecyclerView)
 
-        host_room.invalidate()
+        set_initial_budget.setOnClickListener {
+            MaterialDialog.Builder(this)
+                .title("초기 자금 설정")
+                .input(0, 0, true, MaterialDialog.InputCallback { dialog, input ->
+                    if (input.isNotEmpty()) {
+                        host_player.setbudget(input.toString().toInt())
+                        initial_budget.text = input.toString()
+                        viewAdapter.update_budget(input.toString().toInt(), "host")
+                    }
+                })
+                .inputType(android.text.InputType.TYPE_CLASS_NUMBER
+                        or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                .show()
+        }
     }
 
     override fun onStartDrag(viewHolder: RoomRecyclerAdapter.MyViewHolder) {
