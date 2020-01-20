@@ -7,6 +7,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +23,7 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
 
     private val TAG = "RoomsActivity"
     private lateinit var adapter: RoomsAdapter
+    private var hostId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +32,11 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
 
         loading.setOnTouchListener { _, _ -> true }
 
-
         adapter = RoomsAdapter(arrayListOf<Pair<String, String>>())
         adapter.setOnItemClkListener {
             Nearby.getConnectionsClient(this@RoomsActivity).stopDiscovery()
             loading.visibility = View.VISIBLE
+            hostId = it
             Nearby.getConnectionsClient(this@RoomsActivity)
                 .requestConnection(userName, it, connCallback)
         }
@@ -66,8 +68,11 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
             Nearby.getConnectionsClient(this@RoomsActivity).stopDiscovery()
             loading.visibility = View.GONE
+            hostId = ""
             when (result.status.statusCode) {
-                ConnectionsStatusCodes.STATUS_OK -> {}
+                ConnectionsStatusCodes.STATUS_OK -> {
+
+                }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.wtf(TAG, "rejected")
                 }
@@ -111,5 +116,13 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         Handler().postDelayed({
             swipeRefresh.isRefreshing = false
         }, 2000)
+    }
+
+    override fun onBackPressed() {
+        if (loading.visibility == View.VISIBLE) {
+            Nearby.getConnectionsClient(this).disconnectFromEndpoint(hostId)
+            loading.visibility = View.GONE
+        }
+        else super.onBackPressed()
     }
 }
