@@ -1,5 +1,6 @@
 package com.example.bettingservice
 
+import com.example.bettingservice.client.RoomsActivity
 import android.content.DialogInterface
 import android.content.Intent
 import android.nfc.Tag
@@ -20,12 +21,12 @@ import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.create_game_layout.*
 
+var userName : String = ""
+
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "NearbyConnection"
 
-    private lateinit var userName: String
-    private var flag = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             userName = nameInputEditText.text.toString()
-            flag = 1
 
             val itemView = LayoutInflater.from(this)
                 .inflate(R.layout.create_game_layout, null)
@@ -114,22 +114,8 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            userName = nameInputEditText.text.toString()
-            val options = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_CLUSTER).build()
-            flag = 2
-
-            Nearby.getConnectionsClient(this)
-                .startDiscovery(
-                    "com.example.bettingservice",
-                    discoverCallback,
-                    options
-                )
-                .addOnSuccessListener {
-                    Log.wtf(TAG, "success")
-                }
-                .addOnFailureListener {
-                    Log.wtf(TAG, "failue")
-                }
+            startActivity(Intent(this, RoomsActivity::class.java))
+            finish()
         }
     }
 
@@ -151,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
-            if (flag == 2) Nearby.getConnectionsClient(this@MainActivity).stopDiscovery()
+            Nearby.getConnectionsClient(this@MainActivity).stopDiscovery()
 
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
