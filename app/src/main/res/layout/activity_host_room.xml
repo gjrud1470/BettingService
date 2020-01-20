@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/table_background"
+    android:id="@+id/host_room"
     tools:context=".Host.HostRoomActivity">
 
     <LinearLayout
@@ -19,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/room_name"
+            android:id="@+id/display_room_name"
             android:text = "Room Name"
             android:textSize="32sp"
             android:textColor="@android:color/white"
@@ -64,7 +65,7 @@
                 android:textColor="@android:color/white" />
 
             <TextView
-                android:id="@+id/player_number"
+                android:id="@+id/display_player_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text = "1"
@@ -85,7 +86,7 @@
                 android:textColor="@android:color/white" />
 
             <TextView
-                android:id="@+id/betting_round"
+                android:id="@+id/display_betting_round"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text = "1"
@@ -106,7 +107,7 @@
         app:layout_constraintTop_toBottomOf="@+id/room_option_layout"
         app:layout_constraintLeft_toLeftOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -115,19 +116,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/display_username"
                 android:text="Your Name"
                 android:textColor="@android:color/white"
                 android:textSize="28sp"
-                app:fontFamily="@font/nanumgothicbold" />
+                app:fontFamily="@font/nanumgothicbold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="초기 자금: "
+                android:id="@+id/budget_text"
+                android:text="자금: "
                 android:textColor="@color/text_gray"
                 android:textSize="18sp"
-                app:fontFamily="@font/nanumgothicbold" />
+                app:fontFamily="@font/nanumgothicbold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/display_username"/>
 
             <TextView
                 android:id="@+id/initial_budget"
@@ -136,12 +145,10 @@
                 android:textColor="@color/text_gray"
                 android:text="0"
                 android:textSize="22sp"
-                app:fontFamily="@font/nanumgothicbold" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                app:fontFamily="@font/nanumgothicbold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/budget_text"/>
 
             <Button
                 android:id="@+id/set_initial_budget"
@@ -151,13 +158,16 @@
                 android:text="입력"
                 android:textSize="16sp"
                 app:fontFamily="@font/nanumgothicextrabold"
-                android:background="@color/button" />
+                android:background="@color/button"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/player_list"
+        android:id="@+id/player_recycler_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"

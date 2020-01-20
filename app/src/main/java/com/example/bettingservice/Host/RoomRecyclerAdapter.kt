@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -26,19 +28,40 @@ import kotlinx.android.synthetic.main.player_item_host.view.*
 import java.util.*
 
 
+interface itemActionListener {
+    fun onItemMoved(from : Int, to : Int)
+}
+
 class RoomRecyclerAdapter(
     private val context: Context,
-    private val list: ArrayList<Player>
+    private val list: ArrayList<Player>,
+    private val listener: itemDragListener
 ) :
-    RecyclerView.Adapter<RoomRecyclerAdapter.MyViewHolder>() {
+    RecyclerView.Adapter<RoomRecyclerAdapter.MyViewHolder>(), itemActionListener {
+
+    private val TAG = "RoomRecyclerAdapter"
 
     private var mContext: Context = context
     var player_list = list
+
+    interface itemDragListener {
+        fun onStartDrag(viewHolder : MyViewHolder)
+    }
+
+    override fun onItemMoved(from: Int, to: Int) {
+        if (from == to) {
+            return
+        }
+        val fromItem = player_list.removeAt(from)
+        player_list.add(to, fromItem)
+        notifyItemMoved(from, to)
+    }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         init {
             val accept_button = itemView.findViewById<Button>(R.id.accept_player)
             val reject_button = itemView.findViewById<Button>(R.id.reject_player)
+            val drag_handle = itemView.findViewById<ImageView>(R.id.drag_handle)
 
             accept_button.setOnClickListener {
                 val position = adapterPosition
@@ -50,7 +73,7 @@ class RoomRecyclerAdapter(
                 itemView.findViewById<TextView>(R.id.budget_text).visibility = View.VISIBLE
                 itemView.findViewById<TextView>(R.id.initial_budget).visibility = View.VISIBLE
                 itemView.findViewById<ImageView>(R.id.drag_handle).visibility = View.VISIBLE
-                notifyItemChanged(position)
+                //notifyItemChanged(position)
             }
             reject_button.setOnClickListener {
                 val position = adapterPosition
@@ -59,6 +82,12 @@ class RoomRecyclerAdapter(
 
                 player_list.removeAt(position)
                 notifyItemRemoved(position)
+            }
+            drag_handle.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    listener.onStartDrag(this)
+                }
+                false
             }
         }
     }
@@ -82,6 +111,14 @@ class RoomRecyclerAdapter(
         // - replace the contents of the view with that element
         holder.itemView.player_name.text = player_list[position].getname()
         holder.itemView.initial_budget.text = player_list[position].getbudget().toString()
+
+        if (player_list[position].getId() == "host") {
+            holder.itemView.accept_player.visibility = View.GONE
+            holder.itemView.reject_player.visibility = View.GONE
+            holder.itemView.budget_text.visibility = View.VISIBLE
+            holder.itemView.initial_budget.visibility = View.VISIBLE
+            holder.itemView.drag_handle.visibility = View.VISIBLE
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -89,7 +126,9 @@ class RoomRecyclerAdapter(
 
     fun addItem(item: Player) {
         player_list.add(item)
-        notifyItemChanged(itemCount - 1)
+        notifyItemInserted(itemCount-1)
+        //notifyDataSetChanged()
+        Log.wtf(TAG, "added item and notified with count ${itemCount}")
     }
 
     fun clearData() {

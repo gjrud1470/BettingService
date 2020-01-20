@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.MadWeek2.RoomRecyclerAdapter
@@ -43,7 +44,7 @@ class Player {
     }
 }
 
-class HostRoomActivity : AppCompatActivity() {
+class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListener {
 
     val TAG = "HostRoomActivity"
 
@@ -55,6 +56,8 @@ class HostRoomActivity : AppCompatActivity() {
     var room_name: String = ""
     var player_number = 0
     var betting_rounds = 0
+
+    var itemTouchHelper : ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,23 +83,45 @@ class HostRoomActivity : AppCompatActivity() {
                 Log.wtf(TAG, "failue")
             }
 
-        viewAdapter = RoomRecyclerAdapter(this, arrayListOf<Player>())
+        display_room_name.text = room_name
+        display_username.text = userName
+        display_player_number.text = player_number.toString()
+        display_betting_round.text = betting_rounds.toString()
+
+        val host_player = Player()
+        host_player.setname(userName)
+        host_player.setbudget(0)
+        host_player.setId("host")
+        val initial_player_list = arrayListOf<Player>(host_player)
+
+        viewAdapter = RoomRecyclerAdapter(this, initial_player_list, this)
         viewManager = LinearLayoutManager(this)
-        RoomRecyclerView = player_list.apply {
-            setHasFixedSize(true)
+        RoomRecyclerView = player_recycler_list.apply {
             layoutManager = viewManager
             adapter = viewAdapter
         }
+
+        itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(viewAdapter))
+        itemTouchHelper!!.attachToRecyclerView(RoomRecyclerView)
+
+        host_room.invalidate()
+    }
+
+    override fun onStartDrag(viewHolder: RoomRecyclerAdapter.MyViewHolder) {
+        itemTouchHelper!!.startDrag(viewHolder)
     }
 
 
     val connCallback = object : ConnectionLifecycleCallback() {
 
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
+            Log.wtf(TAG, "connection initiated host")
             if (viewAdapter.itemCount < player_number) {
+                Log.wtf(TAG, "add item")
                 val player = Player()
                 player.setId(endpointId)
                 player.setname(connectionInfo.endpointName)
+                Log.wtf(TAG, connectionInfo.endpointName)
                 player.setbudget(0)
                 viewAdapter.addItem(player)
             } else {
