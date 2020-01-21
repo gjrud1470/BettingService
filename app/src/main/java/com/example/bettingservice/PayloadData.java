@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public class PayloadData implements Serializable {
 
+    public PayloadData() {
+    }
+
     public Action getFlag() {
         return flag;
     }
@@ -19,10 +22,12 @@ public class PayloadData implements Serializable {
     public enum Action {
         ENTER_ROOM_INFO,
         UPDATE_ROOM,
+        UPDATE_USER_BUDGET,
         START_GAME,
         UPDATE_GAME
     }
 
+    // From Host to Client
     private ArrayList<Player> playerList;
     private Integer pool;
     private Integer toCall;
@@ -30,6 +35,10 @@ public class PayloadData implements Serializable {
     private Integer totalRound;
     private String yourId;
     private String roomName;
+
+    // From Client to Host
+    private Integer user_initial_budget;
+
     private Action flag;
 
 
@@ -87,5 +96,11 @@ public class PayloadData implements Serializable {
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
+    }
+
+    public Integer getUser_initial_budget() { return user_initial_budget; }
+
+    public void setUser_initial_budget(Integer user_initial_budget) {
+        this.user_initial_budget = user_initial_budget;
     }
 }
