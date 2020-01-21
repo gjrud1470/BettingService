@@ -30,6 +30,7 @@
                 android:textColor="#FFFFFF"/>
 
             <TextView
+                android:id="@+id/budget_text_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="22sp"

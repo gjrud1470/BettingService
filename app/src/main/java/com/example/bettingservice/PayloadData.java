@@ -8,9 +8,6 @@ import java.util.ArrayList;
 
 public class PayloadData implements Serializable {
 
-    public PayloadData() {
-    }
-
     public Action getFlag() {
         return flag;
     }
@@ -24,7 +21,9 @@ public class PayloadData implements Serializable {
         UPDATE_ROOM,
         UPDATE_USER_BUDGET,
         START_GAME,
-        UPDATE_GAME
+        UPDATE_GAME,
+        SEND_BET_INFO,
+        USER_FOLD
     }
 
     // From Host to Client
@@ -40,6 +39,7 @@ public class PayloadData implements Serializable {
 
     // From Client to Host
     private Integer user_initial_budget;
+    private Integer bet;
 
     private Action flag;
 
@@ -113,4 +113,8 @@ public class PayloadData implements Serializable {
     public Integer getStart_player() { return start_player; }
 
     public void setStart_player(Integer start_player) { this.start_player = start_player; }
+
+    public Integer getBet() { return bet; }
+
+    public void setBet(Integer bet) { this.bet = bet; }
 }

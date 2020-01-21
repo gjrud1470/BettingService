@@ -13,4 +13,8 @@
     <color name="button">#636F5C</color>
     <color name="accept">#4CAF50</color>
     <color name="reject">#FF5A5A</color>
+
+    <color name="highlight">#CDDC39</color>
+    <color name="folded_background">#000000</color>
+    <color name="folded_text">#80686868</color>
 </resources>
