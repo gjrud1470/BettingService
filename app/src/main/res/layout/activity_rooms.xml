@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/table_background"
     tools:context=".client.RoomsActivity"
     android:orientation="vertical">
 
@@ -22,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Join Game"
-                android:textColor="#FFC107"
-                android:textSize="30dp"
+                android:textColor="#FFFFFF"
+                android:textSize="32sp"
                 android:textStyle="bold" />
             <Space
                 android:layout_width="wrap_content"
@@ -56,7 +57,7 @@
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
-            android:indeterminateTint="#000000"
+            android:indeterminateTint="#FFFFFF"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"/>

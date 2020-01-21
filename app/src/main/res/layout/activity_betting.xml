@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/table_background"
     tools:context=".BettingActivity">
 
     <LinearLayout
@@ -17,19 +18,20 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center"
+            android:paddingLeft="15dp"
             android:text="제목"
-            android:textSize="30dp"/>
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"/>
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
 
-        <ImageButton
-            android:id="@+id/settingButton"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_setting_white" />
 
     </LinearLayout>
@@ -49,63 +51,136 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="150dp"
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="POOL: "
-                android:textSize="30dp"/>
+                app:cardBackgroundColor="@color/text_background"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1sp"
+                app:cardUseCompatPadding="true">
 
-            <TextView
-                android:id="@+id/pool"
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="POOL"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30dp" />
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="30dp" />
+                app:cardBackgroundColor="@color/text_background"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1sp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/pool"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="  0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30dp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/text_background"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1sp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="TO CALL"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30dp"/>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/text_background"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1sp"
+                app:cardUseCompatPadding="true">
+
+                <TextView
+                    android:id="@+id/toCall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30dp"/>
+
+            </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="150dp"
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="TO CALL: "
-                android:textSize="30dp"/>
+                app:cardBackgroundColor="@color/text_background"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1sp"
+                app:cardUseCompatPadding="true">
 
-            <TextView
-                android:id="@+id/toCall"
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="BUDGET"
+                    android:textSize="30dp"
+                    android:textColor="#FFFFFF"/>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="30dp"/>
-        </LinearLayout>
+                app:cardBackgroundColor="@color/text_background"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1sp"
+                app:cardUseCompatPadding="true">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/rest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="  0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30dp"/>
 
-            <TextView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="BUDGET: "
-                android:textSize="30dp"/>
-
-            <TextView
-                android:id="@+id/rest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="30dp"/>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
@@ -114,7 +189,7 @@
     <LinearLayout
         android:id="@+id/threeButtons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:orientation="horizontal" >
@@ -123,17 +198,45 @@
             android:id="@+id/call"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CALL"/>
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="CALL"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:background="@color/button"
+            android:textColor="#FFFFFF"/>
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/raise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RAISE" />
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="RAISE"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:background="@color/button"
+            android:textColor="#FFFFFF"/>
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/fold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FOLD" />
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="FOLD"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:background="@color/button"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 
 </RelativeLayout>
