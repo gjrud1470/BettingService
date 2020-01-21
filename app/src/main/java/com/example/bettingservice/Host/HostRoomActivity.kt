@@ -14,14 +14,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.MadWeek2.RoomRecyclerAdapter
+import com.example.bettingservice.PayloadData
 import com.example.bettingservice.R
-import com.example.bettingservice.userName
+import com.example.bettingservice.thisUser
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.github.javiersantos.materialstyleddialogs.enums.Style
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.activity_host_room.*
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
 import java.io.Serializable
 
 class Player : Serializable {
@@ -94,12 +97,12 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
             }
 
         display_room_name.text = room_name
-        display_username.text = userName
+        display_username.text = thisUser.getname()
         display_player_number.text = player_number.toString()
         display_betting_round.text = betting_rounds.toString()
 
         val host_player = Player()
-        host_player.setname(userName)
+        host_player.setname(thisUser.getname()!!)
         host_player.setbudget(0)
         host_player.setId("host")
         val initial_player_list = arrayListOf<Player>(host_player)
@@ -158,6 +161,22 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
 
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
+                    val bos = ByteArrayOutputStream()
+                    val oos = ObjectOutputStream(bos)
+                    val data = PayloadData()
+                    data.playerList = viewAdapter.player_list
+                    data.totalRound = betting_rounds
+                    data.roomName = room_name
+                    data.pool = 0
+                    data.turn = 0
+                    data.toCall = 0
+                    data.yourId = endpointId
+                    oos.writeObject(data)
+                    oos.flush()
+                    oos.close()
+
+                    val payload = Payload.fromBytes(bos.toByteArray())
+                    Nearby.getConnectionsClient(this@HostRoomActivity).sendPayload(endpointId, payload)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.wtf(TAG, "rejected")
@@ -171,17 +190,6 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
 
         override fun onDisconnected(endpointId: String) {
             Log.wtf(TAG, "disconnected")
-        }
-
-    }
-
-    val payloadCallback = object : PayloadCallback() {
-        override fun onPayloadReceived(endpointId: String, payload: Payload) {
-
-        }
-
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
-
         }
 
     }

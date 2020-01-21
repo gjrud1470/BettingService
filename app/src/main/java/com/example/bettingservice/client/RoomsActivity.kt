@@ -1,23 +1,21 @@
 package com.example.bettingservice.client
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.bettingservice.PayloadData
 import com.example.bettingservice.R
-import com.example.bettingservice.userName
+import com.example.bettingservice.myData
+import com.example.bettingservice.thisUser
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_rooms.*
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
 
 class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
@@ -31,15 +29,13 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         swipeRefresh.setOnRefreshListener(this)
 
         loading.setOnTouchListener { _, _ -> true }
-
         adapter = RoomsAdapter(arrayListOf<Pair<String, String>>())
         adapter.setOnItemClkListener {
             Nearby.getConnectionsClient(this@RoomsActivity).stopDiscovery()
             loading.visibility = View.VISIBLE
             hostId = it
-            Log.wtf("WTF", "hi ${userName}")
             Nearby.getConnectionsClient(this@RoomsActivity)
-                .requestConnection(userName, it, connCallback)
+                .requestConnection(thisUser.getname()!!, it, connCallback)
         }
 
         recyclerView.adapter = adapter
@@ -74,11 +70,9 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
                 ConnectionsStatusCodes.STATUS_OK -> {
 
                 }
-                ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                    Log.wtf(TAG, "rejected")
+                else -> {
+
                 }
-                ConnectionsStatusCodes.STATUS_ERROR -> {}
-                else -> {}
             }
         }
 
@@ -102,7 +96,14 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
 
     val payloadCallback = object : PayloadCallback() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
+            val byteArray = payload.asBytes()
+            val bis = ByteArrayInputStream(byteArray)
+            val ois = ObjectInputStream(bis)
 
+            myData = ois.readObject() as PayloadData
+            when (myData.flag) {
+                else -> {}
+            }
         }
 
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
