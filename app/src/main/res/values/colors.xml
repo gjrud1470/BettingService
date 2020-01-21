@@ -17,4 +17,5 @@
     <color name="highlight">#CDDC39</color>
     <color name="folded_background">#000000</color>
     <color name="folded_text">#80686868</color>
+    <color name="white">#FFFFFF</color>
 </resources>

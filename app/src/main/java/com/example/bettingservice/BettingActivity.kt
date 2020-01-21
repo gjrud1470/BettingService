@@ -36,30 +36,11 @@ class BettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_betting)
 
-        // Connect to all other players
-        /*
-        if (myData.yourId != "host") {
-            var request_flag = false
-            val options = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_CLUSTER)
-                .build()
-            Nearby.getConnectionsClient(this).startAdvertising(
-                thisUser.getname()!!,
-                "com.example.bettingservice",
-                connCallback,
-                options
-            )
-            myData.playerList.forEach {
-                if (it.getId() == myData.yourId) {
-                    request_flag = true
-                } else if (request_flag) {
-                    Nearby.getConnectionsClient(this)
-                        .requestConnection(thisUser.getname()!!, it.getId()!!, connCallback)
-                }
-            } */
-
-
         Log.wtf(TAG, myData.playerList.toString())
         adapter = PlayerAdapter(myData.playerList)
+        val totalRoundtext = "/ ${myData.totalRound.toString()}"
+        totalRound.text = totalRoundtext
+        curRound.text = "1"
         userList.adapter = adapter
         userList.layoutManager = LinearLayoutManager(this)
 
@@ -162,15 +143,42 @@ class BettingActivity : AppCompatActivity() {
             if (my_turn && !folded) {
                 if (myData.yourId == "host") {
                     folded = true
+                    var live_players = 0
                     myData.playerList.forEachIndexed { index, player ->
                         if (player.getId() == myData.yourId) {
                             player.folded = true
+                        } else if (!player.folded) {
+                            live_players++
                         }
                     }
-                    myData.turn++
-                    broadcast_updated_betinfo()
+                    if (live_players == 1) {
+                        var winner_index = -1
+                        myData.playerList.forEachIndexed { index, player ->
+                            if (!player.folded) {
+                                val winner_budget = player.getbudget()!! + myData.pool
+                                player.setbudget(winner_budget)
+                                broadcast_winner(index)
+                                winner_index = index
 
-                    one_turn(myData.turn % myData.playerList.size)
+                                if (player.getId() == "host") {
+                                    budget.text = winner_budget.toString()
+                                }
+                            }
+                        }
+                        adapter.playerList = myData.playerList
+                        adapter.notifyDataSetChanged()
+
+                        val winner_name = myData.playerList[winner_index].getname()
+                        MaterialDialog.Builder(this@BettingActivity)
+                            .title("승자는 ${winner_name} 입니다.\n 축하합니다.")
+                            .positiveText("확인")
+                            .show()
+                    } else {
+                        myData.turn++
+                        broadcast_updated_betinfo()
+
+                        one_turn(myData.turn % myData.playerList.size)
+                    }
                 } else {
                     folded = true
                     user_folded(host_endpoint_id)
@@ -227,20 +235,122 @@ class BettingActivity : AppCompatActivity() {
                 pool.text = pool_value.toString()
                 toCall.text = toCall_value.toString()
                 budget.text = mybudget.toString()
+                curRound.text = myData.roundNum.toString()
 
                 one_turn(myData.turn % myData.playerList.size)
             }
 
             override fun update_folded_user(endpointId: String) {
+                var live_players = 0
                 myData.playerList.forEachIndexed { index, player ->
                     if (player.getId() == endpointId) {
                         player.folded = true
+                    } else if (!player.folded) {
+                        live_players++
                     }
                 }
-                myData.turn++
-                broadcast_updated_betinfo()
+                if (live_players == 1) {
+                    var winner_index = -1
+                    myData.playerList.forEachIndexed { index, player ->
+                        if (!player.folded) {
+                            val winner_budget = player.getbudget()!! + myData.pool
+                            player.setbudget(winner_budget)
+                            broadcast_winner(index)
+                            winner_index = index
 
-                one_turn(myData.turn % myData.playerList.size)
+                            if (player.getId() == "host") {
+                                budget.text = winner_budget.toString()
+                            }
+                        }
+                    }
+                    adapter.playerList = myData.playerList
+                    adapter.notifyDataSetChanged()
+
+                    restart_game()
+
+                    val winner_name = myData.playerList[winner_index].getname()
+                    MaterialDialog.Builder(this@BettingActivity)
+                        .title("승자는 ${winner_name} 입니다.\n 축하합니다.")
+                        .positiveText("확인")
+                        .show()
+                } else {
+                    myData.turn++
+                    broadcast_updated_betinfo()
+
+                    one_turn(myData.turn % myData.playerList.size)
+                }
+            }
+
+            override fun receive_winner(winner_id: Int) {
+                if (myData.playerList[winner_id].getId() == myData.yourId) {
+                    mybudget = myData.playerList[winner_id].getbudget()!!
+                    budget.text = mybudget.toString()
+                }
+                adapter.playerList = myData.playerList
+                adapter.notifyDataSetChanged()
+
+                val winner_name = myData.playerList[winner_id].getname()
+
+                restart_game()
+
+                MaterialDialog.Builder(this@BettingActivity)
+                    .title("승자는 ${winner_name} 입니다.\n 축하합니다.")
+                    .positiveText("확인")
+                    .onPositive { dialog, which ->
+                        dialog.dismiss()
+                        /*
+                        MaterialDialog.Builder(this@BettingActivity)
+                            .title("계속 하시겠습니까?")
+                            .positiveText("당연하지")
+                            .negativeText("난 쫄려서...")
+                            .onPositive { dialog_in, which_in ->
+                                dialog_in.dismiss()
+                            }
+                            .onNegative { dialog_in, which_in ->
+                                user_left_game(host_endpoint_id)
+
+                                Nearby.getConnectionsClient(this@BettingActivity).stopAllEndpoints()
+                                val intent = Intent(this@BettingActivity, MainActivity::class.java)
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                                finish()
+                            }
+                            .show() */
+                    }
+                    .show()
+            }
+
+            override fun user_left(left_id: String) {
+                var left_index = -1
+                myData.playerList.forEachIndexed { index, player ->
+                    if (player.getId() == left_id) {
+                        left_index = index
+                    }
+                }
+                myData.playerList.removeAt(left_index)
+                adapter.notifyItemRemoved(left_index)
+                broadcast_updated_betinfo()
+            }
+
+            override fun receive_game_winner(winner_id: Int) {
+                if (myData.playerList[winner_id].getId() == myData.yourId) {
+                    mybudget = myData.playerList[winner_id].getbudget()!!
+                    budget.text = mybudget.toString()
+                }
+                adapter.playerList = myData.playerList
+                adapter.notifyDataSetChanged()
+
+                val winner_name = myData.playerList[winner_id].getname()
+
+                restart_game()
+
+                MaterialDialog.Builder(this@BettingActivity)
+                    .title("승자는 ${winner_name} 입니다.\n 축하합니다.")
+                    .positiveText("확인")
+                    .onPositive { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .show()
             }
         }
 
@@ -249,6 +359,57 @@ class BettingActivity : AppCompatActivity() {
     }
 
     fun one_turn(player_index: Int) {
+        if (myData.roundNum < myData.totalRound) {
+
+                if (myData.turn - myData.start_player >= myData.playerList.size) {
+
+                    var isFinished = true
+
+                    myData.playerList.forEach {
+                        if (!it.folded && it.toCall != 0) isFinished = false
+                    }
+
+                    if (isFinished) {
+                        if (myData.yourId == "host") {
+                            round_finished()
+                        }
+
+                    }
+                    else {
+                        resume_turn(player_index)
+                    }
+                }
+                else {
+                    resume_turn(player_index)
+                }
+        }
+        else if (myData.roundNum >= myData.totalRound) {
+            if (myData.turn - myData.start_player >= myData.playerList.size) {
+
+                var isFinished = true
+
+                myData.playerList.forEach {
+                    if (!it.folded && it.toCall != 0) isFinished = false
+                }
+
+                if (isFinished) {
+                    folded = false
+                    if (myData.yourId == "host") {
+                        game_finished()
+                    }
+
+                }
+                else {
+                    resume_turn(player_index)
+                }
+            }
+            else {
+                resume_turn(player_index)
+            }
+        }
+    }
+
+    fun resume_turn(player_index: Int) {
         adapter.playerList = myData.playerList
         adapter.highlight_player(player_index)
         if (player_index == mynumber) {
@@ -257,8 +418,7 @@ class BettingActivity : AppCompatActivity() {
                     myData.turn++
                     broadcast_updated_betinfo()
                     one_turn(myData.turn % myData.playerList.size)
-                }
-                else {
+                } else {
                     user_folded(host_endpoint_id)
                 }
             } else {
@@ -267,7 +427,6 @@ class BettingActivity : AppCompatActivity() {
         } else {
             disable_turn()
         }
-
     }
 
     fun enable_turn() {
@@ -289,15 +448,101 @@ class BettingActivity : AppCompatActivity() {
         fold.setBackgroundColor(resources.getColor(R.color.button))
     }
 
-    fun betting_round(start_player: Int): Int {
-        adapter.highlight_player(start_player)
-        return 0
-    }
-
     override fun onBackPressed() {
         Toast.makeText(this, "벌써 가게?", Toast.LENGTH_SHORT).show()
     }
 
+    fun round_finished() {
+        //endpointId: String
+        myData.turn = 0
+        myData.roundNum++
+        curRound.text = myData.roundNum.toString()
+
+        MaterialDialog.Builder(this@BettingActivity)
+            .title("다음 라운드 첫번째 플레이어를 선택해주세요")
+            .autoDismiss(false)
+            .input(0, 0, false) { dialog, input ->
+                var flag = false
+                myData.playerList.forEachIndexed { index, player ->
+                    Log.wtf(TAG, input.toString())
+                    if (player.getname() == input.toString()) {
+                        myData.start_player = index
+                        flag = true
+                    }
+                }
+                if (flag) {
+                    dialog.dismiss()
+                    myData.turn = myData.start_player
+                    broadcast_updated_betinfo()
+                    one_turn(myData.start_player)
+                }
+                else {
+                    Toast.makeText(this@BettingActivity, "올바른 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+            .inputType(android.text.InputType.TYPE_CLASS_TEXT)
+            .show()
+    }
+
+    fun game_finished() {
+        myData.playerList.forEachIndexed { index, player ->
+            myData.playerList[index].folded = false
+        }
+        MaterialDialog.Builder(this@BettingActivity)
+            .title("승자를 입력해주세요.")
+            .autoDismiss(false)
+            .input(0, 0, false) { dialog, input ->
+                var flag = false
+                var winner_index = -1
+                myData.playerList.forEachIndexed { index, player ->
+                    if (player.getname() == input.toString()) {
+                        val winner_budget = player.getbudget()!! + myData.pool
+                        player.setbudget(winner_budget)
+                        winner_index = index
+                        flag = true
+
+                        if (player.getId() == "host") {
+                            budget.text = winner_budget.toString()
+                        }
+                    }
+                }
+
+                if (flag) {
+                    dialog.dismiss()
+
+                    adapter.playerList = myData.playerList
+                    adapter.notifyDataSetChanged()
+
+                    val winner_name = myData.playerList[winner_index].getname()
+                    MaterialDialog.Builder(this@BettingActivity)
+                        .title("승자는 ${winner_name} 입니다.\n 축하합니다.")
+                        .positiveText("확인")
+                        .show()
+
+                    myData.turn = winner_index
+                    myData.start_player = winner_index
+                    broadcast_game_winner(winner_index)
+
+                    restart_game()
+                }
+                else {
+                    Toast.makeText(this@BettingActivity, "올바른 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+            .inputType(android.text.InputType.TYPE_CLASS_TEXT)
+            .show()
+    }
+
+    fun restart_game() {
+        myData.pool = 0
+        myData.roundNum = 1
+        myData.turn = myData.start_player
+        pool.text = myData.pool.toString()
+        curRound.text = myData.roundNum.toString()
+        one_turn(myData.start_player)
+    }
 
     fun user_bet_info(endpointId: String, bet: Int) {
         val bos = ByteArrayOutputStream()
@@ -328,6 +573,21 @@ class BettingActivity : AppCompatActivity() {
         Nearby.getConnectionsClient(this@BettingActivity).sendPayload(endpointId, payload)
     }
 
+
+    fun user_left_game(endpointId: String) {
+        val bos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(bos)
+        val data = PayloadData()
+        data.flag = PayloadData.Action.USER_LEFT
+        data.yourId = endpointId
+        oos.writeObject(data)
+        oos.flush()
+        oos.close()
+
+        val payload = Payload.fromBytes(bos.toByteArray())
+        Nearby.getConnectionsClient(this@BettingActivity).sendPayload(endpointId, payload)
+    }
+
     // For Host use ONLY
     fun broadcast_updated_betinfo() {
         myData.playerList.forEach {
@@ -342,8 +602,56 @@ class BettingActivity : AppCompatActivity() {
         val data = PayloadData()
         data.flag = PayloadData.Action.UPDATE_GAME
         data.playerList = ArrayList(myData.playerList)
+        data.start_player = myData.start_player
+        data.roundNum = myData.roundNum
         data.pool = myData.pool
         data.turn = myData.turn
+        data.yourId = endpointId
+        oos.writeObject(data)
+        oos.flush()
+        oos.close()
+
+        val payload = Payload.fromBytes(bos.toByteArray())
+        Nearby.getConnectionsClient(this@BettingActivity).sendPayload(endpointId, payload)
+    }
+
+    fun broadcast_winner(winner_id: Int) {
+        myData.playerList.forEach {
+            if (it.getId()!! != "host")
+                send_winner(it.getId()!!, winner_id)
+        }
+    }
+
+    fun send_winner(endpointId: String, winner_id: Int) {
+        val bos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(bos)
+        val data = PayloadData()
+        data.flag = PayloadData.Action.BROADCAST_WINNER
+        data.playerList = ArrayList(myData.playerList)
+        data.start_player = winner_id
+        data.yourId = endpointId
+        oos.writeObject(data)
+        oos.flush()
+        oos.close()
+
+        val payload = Payload.fromBytes(bos.toByteArray())
+        Nearby.getConnectionsClient(this@BettingActivity).sendPayload(endpointId, payload)
+    }
+
+    fun broadcast_game_winner(winner_id: Int) {
+        myData.playerList.forEach {
+            if (it.getId()!! != "host")
+                send_game_winner(it.getId()!!, winner_id)
+        }
+    }
+
+    fun send_game_winner(endpointId: String, winner_id: Int) {
+        val bos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(bos)
+        val data = PayloadData()
+        data.flag = PayloadData.Action.BROADCAST_GAME_WINNER
+        data.playerList = ArrayList(myData.playerList)
+        data.start_player = winner_id
         data.yourId = endpointId
         oos.writeObject(data)
         oos.flush()

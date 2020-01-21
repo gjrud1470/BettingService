@@ -45,6 +45,8 @@ class MyPayloadCallback : PayloadCallback() {
                 myData.playerList = receivedData.playerList
                 myData.turn = receivedData.turn
                 myData.pool = receivedData.pool
+                myData.start_player = receivedData.start_player
+                myData.roundNum = receivedData.roundNum
                 updateBet.update_pool()
             }
             PayloadData.Action.SEND_BET_INFO -> {
@@ -53,6 +55,19 @@ class MyPayloadCallback : PayloadCallback() {
             }
             PayloadData.Action.USER_FOLD -> {
                 updateBet.update_folded_user(endpointId)
+            }
+            PayloadData.Action.BROADCAST_WINNER -> {
+                myData.playerList = receivedData.playerList
+                myData.start_player = receivedData.start_player
+                updateBet.receive_winner(receivedData.start_player)
+            }
+            PayloadData.Action.USER_LEFT -> {
+                updateBet.user_left(endpointId)
+            }
+            PayloadData.Action.BROADCAST_GAME_WINNER -> {
+                myData.playerList = receivedData.playerList
+                myData.start_player = receivedData.start_player
+                updateBet.receive_game_winner(receivedData.start_player)
             }
             else -> {}
         }
@@ -75,5 +90,8 @@ class MyPayloadCallback : PayloadCallback() {
         fun update_pool ()
         fun update_user_bet(endpointId:String, bet: Int)
         fun update_folded_user(endpointId: String)
+        fun receive_winner(winner_id: Int)
+        fun user_left(left_id: String)
+        fun receive_game_winner(winner_id: Int)
     }
 }

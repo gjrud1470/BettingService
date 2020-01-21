@@ -16,6 +16,14 @@ public class PayloadData implements Serializable {
         this.flag = flag;
     }
 
+    public Integer getRoundNum() {
+        return roundNum;
+    }
+
+    public void setRoundNum(Integer roundNum) {
+        this.roundNum = roundNum;
+    }
+
     public enum Action {
         ENTER_ROOM_INFO,
         UPDATE_ROOM,
@@ -23,7 +31,10 @@ public class PayloadData implements Serializable {
         START_GAME,
         UPDATE_GAME,
         SEND_BET_INFO,
-        USER_FOLD
+        USER_FOLD,
+        BROADCAST_WINNER,
+        USER_LEFT,
+        BROADCAST_GAME_WINNER
     }
 
     // From Host to Client
@@ -36,6 +47,7 @@ public class PayloadData implements Serializable {
     private Integer totalRound;
     private String yourId;
     private String roomName;
+    private Integer roundNum = 1;
 
     // From Client to Host
     private Integer user_initial_budget;

@@ -53,6 +53,9 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
         }
         else {
             holder.cardView.setCardBackgroundColor(mcontext.getResources().getColor(R.color.button));
+            holder.playerName.setTextColor(mcontext.getResources().getColor(R.color.white));
+            holder.playerBudget.setTextColor(mcontext.getResources().getColor(R.color.white));
+            holder.budget_text_item.setTextColor(mcontext.getResources().getColor(R.color.white));
         }
     }
 

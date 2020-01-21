@@ -24,6 +24,25 @@
             android:textColor="#FFFFFF"
             android:textSize="32sp"/>
 
+        <TextView
+            android:id="@+id/curRound"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:text="1"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"/>
+
+        <TextView
+            android:id="@+id/totalRound"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="/Total"
+            android:textColor="#FFFFFF"
+            android:textSize="32sp"/>
+
         <Space
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,6 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:visibility="gone"
             android:src="@drawable/ic_setting_white" />
 
     </LinearLayout>
