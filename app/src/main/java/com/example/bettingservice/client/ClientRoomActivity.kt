@@ -3,6 +3,7 @@ package com.example.bettingservice.client
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,31 +37,31 @@ class ClientRoomActivity : AppCompatActivity() {
         setContentView(R.layout.activity_host_room)
 
         room_name = myData.roomName
-        player_number = myData.playerList.size
+        player_number = myData.player_number
         betting_rounds = myData.totalRound
         thisUser.setId(myData.yourId)
-
-        mPayloadCallback.updateRoom = object: MyPayloadCallback.UpdateRoom {
-            override fun update() {
-                viewAdapter.player_list = myData.playerList
-                viewAdapter.notifyDataSetChanged()
-            }
-
-        }
-
 
         display_room_name.text = room_name
         display_username.text = thisUser.getname()
         display_player_number.text = player_number.toString()
         display_betting_round.text = betting_rounds.toString()
 
-        val initial_player_list = arrayListOf<Player>()
+        val initial_player_list = myData.playerList
 
         viewAdapter = ClientRoomAdpater(this, initial_player_list)
         viewManager = LinearLayoutManager(this)
         RoomRecyclerView = player_recycler_list.apply {
             layoutManager = viewManager
             adapter = viewAdapter
+        }
+
+        mPayloadCallback.updateRoom = object: MyPayloadCallback.UpdateRoom {
+            override fun update() {
+                viewAdapter.update_roominfo(myData.playerList)
+                display_room_name.text = myData.roomName
+                display_player_number.text = myData.player_number.toString()
+                display_betting_round.text = myData.totalRound.toString()
+            }
         }
 
         set_initial_budget.setOnClickListener {
@@ -72,7 +73,7 @@ class ClientRoomActivity : AppCompatActivity() {
                         initial_budget.text = input.toString()
                         viewAdapter.update_budget(input.toString().toInt(), thisUser.getId()!!)
 
-                        //send_updated_budget(host_endpoint_id, input.toString().toInt())
+                        send_updated_budget(host_endpoint_id, input.toString().toInt())
                     }
                 }
                 .inputType(android.text.InputType.TYPE_CLASS_NUMBER
@@ -87,9 +88,6 @@ class ClientRoomActivity : AppCompatActivity() {
         val data = PayloadData()
         data.flag = PayloadData.Action.UPDATE_USER_BUDGET
         data.user_initial_budget = budget
-        data.pool = 0
-        data.turn = 0
-        data.toCall = 0
         data.yourId = endpointId
         oos.writeObject(data)
         oos.flush()

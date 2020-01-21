@@ -67,7 +67,7 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
             hostId = ""
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-
+                    host_endpoint_id = endpointId
                 }
                 else -> {
 
@@ -92,7 +92,6 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
         }
 
     }
-
 
     override fun onRefresh() {
         adapter.clearData()

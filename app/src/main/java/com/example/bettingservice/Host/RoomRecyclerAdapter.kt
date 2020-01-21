@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -18,8 +19,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bettingservice.Host.HostRoomActivity
 import com.example.bettingservice.Host.Player
+import com.example.bettingservice.PayloadData
 import com.example.bettingservice.R
+import com.example.bettingservice.mPayloadCallback
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
@@ -55,6 +59,8 @@ class RoomRecyclerAdapter(
         val fromItem = player_list.removeAt(from)
         player_list.add(to, fromItem)
         notifyItemMoved(from, to)
+
+        (context as HostRoomActivity).broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -66,7 +72,7 @@ class RoomRecyclerAdapter(
             accept_button.setOnClickListener {
                 val position = adapterPosition
                 Nearby.getConnectionsClient(mContext)
-                    .acceptConnection(player_list[position].getId()!!, payloadCallback)
+                    .acceptConnection(player_list[position].getId()!!, mPayloadCallback)
 
                 accept_button.visibility = View.GONE
                 reject_button.visibility = View.GONE
@@ -112,12 +118,24 @@ class RoomRecyclerAdapter(
         holder.itemView.player_name.text = player_list[position].getname()
         holder.itemView.initial_budget.text = player_list[position].getbudget().toString()
 
-        if (player_list[position].getId() == "host") {
-            holder.itemView.accept_player.visibility = View.GONE
-            holder.itemView.reject_player.visibility = View.GONE
-            holder.itemView.budget_text.visibility = View.VISIBLE
-            holder.itemView.initial_budget.visibility = View.VISIBLE
-            holder.itemView.drag_handle.visibility = View.VISIBLE
+        if (player_list[position].getId() != "host") {
+            holder.itemView.accept_player.visibility = View.VISIBLE
+            holder.itemView.reject_player.visibility = View.VISIBLE
+            holder.itemView.budget_text.visibility = View.GONE
+            holder.itemView.initial_budget.visibility = View.GONE
+            holder.itemView.drag_handle.visibility = View.GONE
+        }
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+        else {
+            if (TextUtils.equals(payloads[0].toString(), "changed")) {
+                holder.itemView.player_name.text = player_list[position].getname()
+                holder.itemView.initial_budget.text = player_list[position].getbudget().toString()
+            }
         }
     }
 
@@ -140,11 +158,11 @@ class RoomRecyclerAdapter(
         }
     }
 
-    fun update_budget(budget: Int, id: String) {
+    fun update_budget(id: String, budget: Int) {
         player_list.forEachIndexed { index, player ->
             if (player.getId() == id) {
                 player.setbudget(budget)
-                notifyItemChanged(index)
+                notifyItemChanged(index, "changed")
             }
         }
     }
@@ -152,16 +170,5 @@ class RoomRecyclerAdapter(
     fun clearData() {
         player_list.clear()
         notifyDataSetChanged()
-    }
-
-    val payloadCallback = object : PayloadCallback() {
-        override fun onPayloadReceived(endpointId: String, payload: Payload) {
-
-        }
-
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
-
-        }
-
     }
 }

@@ -23,6 +23,7 @@
         android:layout_margin="50dp"
         android:textSize="22dp"
         android:textStyle="bold"
+        app:fontFamily="@font/dancing_script"
         app:layout_constraintTop_toBottomOf="@+id/poker_table"
         app:layout_constraintRight_toRightOf="parent" />
 

@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.MadWeek2.RoomRecyclerAdapter
-import com.example.bettingservice.PayloadData
-import com.example.bettingservice.R
-import com.example.bettingservice.thisUser
+import com.example.bettingservice.*
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.github.javiersantos.materialstyleddialogs.enums.Style
 import com.google.android.gms.nearby.Nearby
@@ -124,7 +122,7 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
                     if (input.isNotEmpty()) {
                         host_player.setbudget(input.toString().toInt())
                         initial_budget.text = input.toString()
-                        viewAdapter.update_budget(input.toString().toInt(), "host")
+                        viewAdapter.update_budget("host", input.toString().toInt())
 
                         broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
                     }
@@ -132,6 +130,13 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
                 .inputType(android.text.InputType.TYPE_CLASS_NUMBER
                         or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL)
                 .show()
+        }
+
+        mPayloadCallback.updateBudget = object: MyPayloadCallback.UpdateUserBudget {
+            override fun update_user_budget(endpointId: String, budget: Int) {
+                viewAdapter.update_budget(endpointId, budget)
+                broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
+            }
         }
     }
 
@@ -163,7 +168,7 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
 
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    send_updated_roominfo(endpointId, PayloadData.Action.ENTER_ROOM_INFO)
+                    send_roominfo(endpointId, PayloadData.Action.ENTER_ROOM_INFO)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.wtf(TAG, "rejected")
@@ -185,16 +190,17 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
     fun broadcast_updated_roominfo(flag: PayloadData.Action) {
         viewAdapter.player_list.forEach {
             if (it.getId()!! != "host")
-                send_updated_roominfo(it.getId()!!, flag)
+                send_roominfo(it.getId()!!, flag)
         }
     }
 
-    fun send_updated_roominfo(endpointId: String, flag: PayloadData.Action) {
+    fun send_roominfo(endpointId: String, flag: PayloadData.Action) {
         val bos = ByteArrayOutputStream()
         val oos = ObjectOutputStream(bos)
         val data = PayloadData()
         data.flag = flag
         data.playerList = viewAdapter.player_list
+        data.player_number = player_number
         data.totalRound = betting_rounds
         data.roomName = room_name
         data.pool = 0
