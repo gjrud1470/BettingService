@@ -10,11 +10,13 @@ import android.widget.EditText
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.bettingservice.Host.HostRoomActivity
+import com.example.bettingservice.Host.Player
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.github.javiersantos.materialstyleddialogs.enums.Style
 import kotlinx.android.synthetic.main.activity_main.*
 
-var userName : String = ""
+var thisUser : Player = Player()
+var myData : PayloadData = PayloadData()
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            userName = nameInputEditText.text.toString()
+            thisUser.setname(nameInputEditText.text.toString())
 
             val itemView = LayoutInflater.from(this)
                 .inflate(R.layout.create_game_layout, null)
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            userName = nameInputEditText.text.toString()
+            thisUser.setname(nameInputEditText.text.toString())
 
             startActivity(Intent(this, RoomsActivity::class.java))
             finish()
