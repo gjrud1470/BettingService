@@ -99,7 +99,6 @@ class MainActivity : AppCompatActivity() {
             thisUser.setname(nameInputEditText.text.toString())
 
             startActivity(Intent(this, RoomsActivity::class.java))
-            finish()
         }
     }
 

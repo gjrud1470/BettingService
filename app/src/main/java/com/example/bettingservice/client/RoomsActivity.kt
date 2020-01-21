@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -77,6 +78,10 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
 
         override fun onDisconnected(endpointId: String) {
             Log.wtf(TAG, "disconnected")
+            Toast.makeText(this@RoomsActivity, "Host has left the room", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@RoomsActivity, RoomsActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
         }
 
     }
@@ -106,6 +111,8 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
             Nearby.getConnectionsClient(this).disconnectFromEndpoint(hostId)
             loading.visibility = View.GONE
         }
-        else super.onBackPressed()
+        else {
+            super.onBackPressed()
+        }
     }
 }
