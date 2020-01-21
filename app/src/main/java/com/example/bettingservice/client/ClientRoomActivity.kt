@@ -7,9 +7,9 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.example.bettingservice.*
 import com.example.bettingservice.Host.Player
-import com.example.bettingservice.R
-import com.example.bettingservice.thisUser
+import com.google.android.gms.nearby.Nearby
 import kotlinx.android.synthetic.main.activity_host_room.*
 
 class ClientRoomActivity : AppCompatActivity() {
@@ -29,9 +29,18 @@ class ClientRoomActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_room)
 
-        room_name = intent.getStringExtra("room_name")!!
-        player_number = intent.getIntExtra("player_number", 1)
-        betting_rounds = intent.getIntExtra("betting_rounds", 1)
+        room_name = myData.roomName
+        player_number = myData.playerList.size
+        betting_rounds = myData.totalRound
+        thisUser.setId(myData.yourId)
+
+        mPayloadCallback.updateRoom = object: MyPayloadCallback.UpdateRoom {
+            override fun update() {
+                viewAdapter.player_list = myData.playerList
+                viewAdapter.notifyDataSetChanged()
+            }
+
+        }
 
 
         display_room_name.text = room_name

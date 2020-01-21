@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 var thisUser : Player = Player()
 var myData : PayloadData = PayloadData()
+var mPayloadCallback : MyPayloadCallback = MyPayloadCallback()
 
 class MainActivity : AppCompatActivity() {
 

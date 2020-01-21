@@ -1,5 +1,6 @@
 package com.example.bettingservice.client
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -7,10 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.bettingservice.PayloadData
-import com.example.bettingservice.R
-import com.example.bettingservice.myData
-import com.example.bettingservice.thisUser
+import com.example.bettingservice.*
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.android.synthetic.main.activity_rooms.*
@@ -59,7 +57,8 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
     private val connCallback = object : ConnectionLifecycleCallback() {
 
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
-            Nearby.getConnectionsClient(this@RoomsActivity).acceptConnection(endpointId, payloadCallback)
+            mPayloadCallback.mContext = this@RoomsActivity
+            Nearby.getConnectionsClient(this@RoomsActivity).acceptConnection(endpointId, mPayloadCallback)
         }
 
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
@@ -94,23 +93,6 @@ class RoomsActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener 
 
     }
 
-    val payloadCallback = object : PayloadCallback() {
-        override fun onPayloadReceived(endpointId: String, payload: Payload) {
-            val byteArray = payload.asBytes()
-            val bis = ByteArrayInputStream(byteArray)
-            val ois = ObjectInputStream(bis)
-
-            myData = ois.readObject() as PayloadData
-            when (myData.flag) {
-                else -> {}
-            }
-        }
-
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
-
-        }
-
-    }
 
     override fun onRefresh() {
         adapter.clearData()
