@@ -19,6 +19,7 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import kotlinx.android.synthetic.main.player_item_host.view.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 interface itemActionListener {
@@ -62,17 +63,11 @@ class ClientRoomAdpater (
         holder.itemView.initial_budget.visibility = View.VISIBLE
         holder.itemView.accept_player.visibility = View.GONE
         holder.itemView.reject_player.visibility = View.GONE
+        holder.itemView.drag_handle.visibility = View.GONE
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = player_list.size
-
-    fun addItem(item: Player) {
-        player_list.add(item)
-        notifyItemInserted(itemCount-1)
-        //notifyDataSetChanged()
-        Log.wtf(TAG, "added item and notified with count ${itemCount}")
-    }
 
     fun update_budget(budget: Int, id: String) {
         player_list.forEachIndexed { index, player ->
@@ -83,9 +78,10 @@ class ClientRoomAdpater (
         }
     }
 
-    fun clearData() {
-        player_list.clear()
+    fun update_roominfo(list: ArrayList<Player>) {
+        player_list = list
         notifyDataSetChanged()
+        Log.wtf("helo", "changed")
     }
 
 }

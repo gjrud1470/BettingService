@@ -32,6 +32,7 @@ public class PayloadData implements Serializable {
     private Integer pool;
     private Integer toCall;
     private Integer turn;
+    private Integer player_number;
     private Integer totalRound;
     private String yourId;
     private String roomName;
@@ -103,4 +104,8 @@ public class PayloadData implements Serializable {
     public void setUser_initial_budget(Integer user_initial_budget) {
         this.user_initial_budget = user_initial_budget;
     }
+
+    public Integer getPlayer_number() { return player_number; }
+
+    public void setPlayer_number(Integer player_number) { this.player_number = player_number; }
 }

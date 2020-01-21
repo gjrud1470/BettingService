@@ -50,7 +50,6 @@
                     android:text="자금: "
                     android:textColor="@color/text_gray"
                     android:textSize="18sp"
-                    android:visibility="gone"
                     app:fontFamily="@font/nanumgothicbold"
                     app:layout_constraintBottom_toBottomOf="@+id/player_name"
                     app:layout_constraintLeft_toRightOf="@+id/player_name"/>
@@ -63,7 +62,6 @@
                     android:textColor="@color/text_gray"
                     android:text="0"
                     android:textSize="22sp"
-                    android:visibility="gone"
                     app:fontFamily="@font/nanumgothicbold"
                     app:layout_constraintBottom_toBottomOf="@+id/budget_text"
                     app:layout_constraintLeft_toRightOf="@+id/budget_text"/>
@@ -78,6 +76,7 @@
                 android:background="@color/accept"
                 android:text="수락"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:fontFamily="@font/nanumgothicextrabold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -100,6 +99,7 @@
                 android:background="@color/reject"
                 android:text="거절"
                 android:textSize="16sp"
+                android:visibility="gone"
                 app:fontFamily="@font/nanumgothicextrabold"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -113,7 +113,6 @@
             android:layout_height="match_parent"
             android:src = "@drawable/ic_drag_handle"
             android:paddingEnd="10dp"
-            android:visibility="gone"
             android:layout_gravity="end" />
 
     </androidx.cardview.widget.CardView>
