@@ -1,10 +1,12 @@
 package com.example.bettingservice.Host
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -68,7 +70,7 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
     var player_number = 0
     var betting_rounds = 0
 
-    var itemTouchHelper : ItemTouchHelper? = null
+    var itemTouchHelper: ItemTouchHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,12 +89,6 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
                 connCallback,
                 options
             )
-            .addOnSuccessListener {
-                Log.wtf(TAG, "success")
-            }
-            .addOnFailureListener {
-                Log.wtf(TAG, "failue")
-            }
 
         display_room_name.text = room_name
         display_username.text = thisUser.getname()
@@ -127,12 +123,86 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
                         broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
                     }
                 })
-                .inputType(android.text.InputType.TYPE_CLASS_NUMBER
-                        or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL)
+                .inputType(
+                    android.text.InputType.TYPE_CLASS_NUMBER
+                            or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+                )
+                .show()
+        }
+        setting_button.setOnClickListener {
+            val itemView = LayoutInflater.from(this)
+                .inflate(R.layout.create_game_layout, null)
+
+            MaterialDialog.Builder(this)
+                .title("설정")
+                .customView(itemView, true)
+                .autoDismiss(false)
+                .positiveText("저장")
+                .onPositive { dialog, which ->
+                    val input_room_name =
+                        itemView.findViewById<View>(R.id.input_room_name) as EditText
+                    val input_player_number =
+                        itemView.findViewById<View>(R.id.input_player_number) as EditText
+                    val input_betting_round =
+                        itemView.findViewById<View>(R.id.input_betting_round) as EditText
+
+                    if (input_room_name.text.toString().isNotEmpty()) {
+                        room_name = input_room_name.text.toString()
+                        display_room_name.text = room_name
+                        Nearby.getConnectionsClient(this).stopAdvertising()
+                        Nearby.getConnectionsClient(this)
+                            .startAdvertising(
+                                room_name,
+                                "com.example.bettingservice",
+                                connCallback,
+                                options
+                            )
+                    }
+                    if (input_player_number.text.toString().isNotEmpty()
+                        && input_player_number.text.toString().toInt() >= viewAdapter.itemCount
+                        && input_player_number.text.toString().toInt() <= 5
+                    ) {
+                        player_number = input_player_number.text.toString().toInt()
+                        display_player_number.text = player_number.toString()
+                    }
+                    if (input_betting_round.text.toString().isNotEmpty()
+                        && input_betting_round.text.toString().toInt() > 0
+                    ) {
+                        betting_rounds = input_betting_round.text.toString().toInt()
+                        display_betting_round.text = betting_rounds.toString()
+                    }
+
+                    if (input_player_number.text.toString().isNotEmpty()
+                        && input_player_number.text.toString().toInt() < viewAdapter.itemCount) {
+                        Toast.makeText(this, "새로운 플레이어 수는 현재 플레이어 수보다 커야 합니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    else if (input_player_number.text.toString().isNotEmpty()
+                        && input_player_number.text.toString().toInt() > 5) {
+                        Toast.makeText(this, "플레이어수는 5명 이하이여야 합니다.", Toast.LENGTH_SHORT).show()
+                    }
+
+                    broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
+                    dialog.dismiss()
+                }
+                .negativeText("취소")
+                .onNegative { dialog, which ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
+        leave_room_button.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Leave Room?")
+                .setPositiveButton("Leave", DialogInterface.OnClickListener { dialog, which ->
+                    onBackPressed()
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
                 .show()
         }
 
-        mPayloadCallback.updateBudget = object: MyPayloadCallback.UpdateUserBudget {
+        mPayloadCallback.updateBudget = object : MyPayloadCallback.UpdateUserBudget {
             override fun update_user_budget(endpointId: String, budget: Int) {
                 viewAdapter.update_budget(endpointId, budget)
                 broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
@@ -182,7 +252,8 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
 
         override fun onDisconnected(endpointId: String) {
             viewAdapter.removeItem(endpointId)
-            Log.wtf(TAG, "disconnected")
+            Nearby.getConnectionsClient(this@HostRoomActivity).disconnectFromEndpoint(endpointId)
+            Log.wtf(TAG, "disconnected from ${endpointId}")
         }
 
     }
@@ -213,5 +284,11 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
 
         val payload = Payload.fromBytes(bos.toByteArray())
         Nearby.getConnectionsClient(this@HostRoomActivity).sendPayload(endpointId, payload)
+    }
+
+    override fun onBackPressed() {
+        Nearby.getConnectionsClient(this@HostRoomActivity).stopAllEndpoints()
+        Nearby.getConnectionsClient(this@HostRoomActivity).stopAdvertising()
+        super.onBackPressed()
     }
 }

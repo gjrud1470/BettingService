@@ -3,34 +3,21 @@ package com.example.bettingservice.client
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bettingservice.Host.Player
 import com.example.bettingservice.R
-import com.google.android.gms.nearby.Nearby
-import com.google.android.gms.nearby.connection.Payload
-import com.google.android.gms.nearby.connection.PayloadCallback
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import kotlinx.android.synthetic.main.player_item_host.view.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 
-interface itemActionListener {
-    fun onItemMoved(from : Int, to : Int)
-}
-
-class ClientRoomAdpater (
+class ClientRoomAdapter (
     private val context: Context,
     private val list: ArrayList<Player>
 ) :
-    RecyclerView.Adapter<ClientRoomAdpater.MyViewHolder>() {
+    RecyclerView.Adapter<ClientRoomAdapter.MyViewHolder>() {
 
     private val TAG = "RoomRecyclerAdapter"
 

@@ -1,15 +1,14 @@
 package com.example.bettingservice.client
 
-import android.content.Intent
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.bettingservice.*
-import com.example.bettingservice.Host.Player
 import com.example.bettingservice.PayloadData
 import com.example.bettingservice.R
 import com.example.bettingservice.thisUser
@@ -25,7 +24,7 @@ class ClientRoomActivity : AppCompatActivity() {
 
     // Define global mutable variables
     lateinit var RoomRecyclerView: RecyclerView
-    private lateinit var viewAdapter: ClientRoomAdpater
+    private lateinit var viewAdapter: ClientRoomAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     var room_name: String = ""
@@ -35,6 +34,8 @@ class ClientRoomActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_room)
+
+        setting_button.visibility = View.GONE
 
         room_name = myData.roomName
         player_number = myData.player_number
@@ -48,7 +49,7 @@ class ClientRoomActivity : AppCompatActivity() {
 
         val initial_player_list = myData.playerList
 
-        viewAdapter = ClientRoomAdpater(this, initial_player_list)
+        viewAdapter = ClientRoomAdapter(this, initial_player_list)
         viewManager = LinearLayoutManager(this)
         RoomRecyclerView = player_recycler_list.apply {
             layoutManager = viewManager
@@ -80,6 +81,17 @@ class ClientRoomActivity : AppCompatActivity() {
                         or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL)
                 .show()
         }
+        leave_room_button.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Leave Room?")
+                .setPositiveButton("Leave", DialogInterface.OnClickListener { dialog, which ->
+                    onBackPressed()
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.dismiss()
+                })
+                .show()
+        }
     }
 
     fun send_updated_budget(endpointId: String, budget: Int) {
@@ -97,4 +109,8 @@ class ClientRoomActivity : AppCompatActivity() {
         Nearby.getConnectionsClient(this@ClientRoomActivity).sendPayload(endpointId, payload)
     }
 
+    override fun onBackPressed() {
+        Nearby.getConnectionsClient(this@ClientRoomActivity).disconnectFromEndpoint(host_endpoint_id)
+        super.onBackPressed()
+    }
 }

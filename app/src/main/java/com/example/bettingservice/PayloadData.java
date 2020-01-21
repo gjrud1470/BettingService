@@ -32,6 +32,7 @@ public class PayloadData implements Serializable {
     private Integer pool;
     private Integer toCall;
     private Integer turn;
+    private Integer start_player;
     private Integer player_number;
     private Integer totalRound;
     private String yourId;
@@ -108,4 +109,8 @@ public class PayloadData implements Serializable {
     public Integer getPlayer_number() { return player_number; }
 
     public void setPlayer_number(Integer player_number) { this.player_number = player_number; }
+
+    public Integer getStart_player() { return start_player; }
+
+    public void setStart_player(Integer start_player) { this.start_player = start_player; }
 }
