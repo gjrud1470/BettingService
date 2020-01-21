@@ -20,6 +20,7 @@
         <activity android:name=".Host.HostRoomActivity"
             android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".client.RoomsActivity" />
+        <activity android:name=".client.ClientRoomActivity" />
         <activity android:name=".Host.CreateActivity" />
         <activity android:name=".SplashActivity">
             <intent-filter>

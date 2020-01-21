@@ -125,6 +125,8 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
                         host_player.setbudget(input.toString().toInt())
                         initial_budget.text = input.toString()
                         viewAdapter.update_budget(input.toString().toInt(), "host")
+
+                        broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)
                     }
                 })
                 .inputType(android.text.InputType.TYPE_CLASS_NUMBER
@@ -161,22 +163,7 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
 
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    val bos = ByteArrayOutputStream()
-                    val oos = ObjectOutputStream(bos)
-                    val data = PayloadData()
-                    data.playerList = viewAdapter.player_list
-                    data.totalRound = betting_rounds
-                    data.roomName = room_name
-                    data.pool = 0
-                    data.turn = 0
-                    data.toCall = 0
-                    data.yourId = endpointId
-                    oos.writeObject(data)
-                    oos.flush()
-                    oos.close()
-
-                    val payload = Payload.fromBytes(bos.toByteArray())
-                    Nearby.getConnectionsClient(this@HostRoomActivity).sendPayload(endpointId, payload)
+                    send_updated_roominfo(endpointId, PayloadData.Action.ENTER_ROOM_INFO)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.wtf(TAG, "rejected")
@@ -189,8 +176,36 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
         }
 
         override fun onDisconnected(endpointId: String) {
+            viewAdapter.removeItem(endpointId)
             Log.wtf(TAG, "disconnected")
         }
 
+    }
+
+    fun broadcast_updated_roominfo(flag: PayloadData.Action) {
+        viewAdapter.player_list.forEach {
+            if (it.getId()!! != "host")
+                send_updated_roominfo(it.getId()!!, flag)
+        }
+    }
+
+    fun send_updated_roominfo(endpointId: String, flag: PayloadData.Action) {
+        val bos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(bos)
+        val data = PayloadData()
+        data.flag = flag
+        data.playerList = viewAdapter.player_list
+        data.totalRound = betting_rounds
+        data.roomName = room_name
+        data.pool = 0
+        data.turn = 0
+        data.toCall = 0
+        data.yourId = endpointId
+        oos.writeObject(data)
+        oos.flush()
+        oos.close()
+
+        val payload = Payload.fromBytes(bos.toByteArray())
+        Nearby.getConnectionsClient(this@HostRoomActivity).sendPayload(endpointId, payload)
     }
 }

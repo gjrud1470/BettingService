@@ -131,6 +131,15 @@ class RoomRecyclerAdapter(
         Log.wtf(TAG, "added item and notified with count ${itemCount}")
     }
 
+    fun removeItem(id: String) {
+        player_list.forEachIndexed { index, player ->
+            if (player.getId() == id) {
+                player_list.removeAt(index)
+                notifyItemRemoved(index)
+            }
+        }
+    }
+
     fun update_budget(budget: Int, id: String) {
         player_list.forEachIndexed { index, player ->
             if (player.getId() == id) {
