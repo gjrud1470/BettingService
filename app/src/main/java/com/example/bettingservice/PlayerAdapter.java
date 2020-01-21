@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bettingservice.Host.Player;
@@ -16,15 +17,20 @@ import java.util.ArrayList;
 public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder> {
 
     ArrayList<Player> playerList;
+    private int highlight_index = 0;
+    private Context mcontext;
+
+    PlayerAdapter(ArrayList<Player> list) { playerList = list; }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         Context context = parent.getContext();
+        mcontext = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View view = inflater.inflate(R.layout.room_item, parent, false);
+        View view = inflater.inflate(R.layout.player_item, parent, false);
         PlayerAdapter.ViewHolder vh = new PlayerAdapter.ViewHolder(view);
 
         return vh;
@@ -32,8 +38,25 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.playerName.setText(playerList.get(position).getname());
-        holder.playerBudget.setText(playerList.get(position).getbudget());
+        String name = String.valueOf(position+1) + ". " + playerList.get(position).getname();
+        holder.playerName.setText(name);
+        holder.playerBudget.setText(String.valueOf(playerList.get(position).getbudget()));
+
+        if (playerList.get(position).getFolded()) {
+            holder.cardView.setCardBackgroundColor(mcontext.getResources().getColor(R.color.folded_background));
+            holder.playerName.setTextColor(mcontext.getResources().getColor(R.color.folded_text));
+            holder.playerBudget.setTextColor(mcontext.getResources().getColor(R.color.folded_text));
+            holder.budget_text_item.setTextColor(mcontext.getResources().getColor(R.color.folded_text));
+        }
+        else if (position == highlight_index) {
+            holder.cardView.setCardBackgroundColor(mcontext.getResources().getColor(R.color.highlight));
+        }
+        else {
+            holder.cardView.setCardBackgroundColor(mcontext.getResources().getColor(R.color.button));
+            holder.playerName.setTextColor(mcontext.getResources().getColor(R.color.white));
+            holder.playerBudget.setTextColor(mcontext.getResources().getColor(R.color.white));
+            holder.budget_text_item.setTextColor(mcontext.getResources().getColor(R.color.white));
+        }
     }
 
     @Override
@@ -44,13 +67,20 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView playerName;
         private TextView playerBudget;
+        private CardView cardView;
+        private TextView budget_text_item;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             playerName = itemView.findViewById(R.id.playerName);
             playerBudget = itemView.findViewById(R.id.playerBudget);
+            cardView = itemView.findViewById(R.id.card_view);
+            budget_text_item = itemView.findViewById(R.id.budget_text_item);
         }
     }
 
-    PlayerAdapter(ArrayList<Player> list) { playerList = list; }
+    public void highlight_player(int position) {
+        highlight_index = position;
+        notifyDataSetChanged();
+    }
 }

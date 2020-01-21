@@ -36,6 +36,7 @@ class ClientRoomActivity : AppCompatActivity() {
         setContentView(R.layout.activity_host_room)
 
         setting_button.visibility = View.GONE
+        start_game_btn.text = "Waiting for Game to Start..."
 
         room_name = myData.roomName
         player_number = myData.player_number

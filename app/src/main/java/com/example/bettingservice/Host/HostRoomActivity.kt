@@ -31,6 +31,16 @@ class Player : Serializable {
     private var endpointId: String? = null
     private var name: String? = null
     private var budget: Int? = null
+    var toCall: Int = 0
+        get() = field
+        set(value) {
+            field = value
+        }
+    var folded: Boolean = false
+        get() = field
+        set(value) {
+            field = value
+        }
 
     fun getId(): String? {
         return endpointId
@@ -111,6 +121,19 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(viewAdapter))
         itemTouchHelper!!.attachToRecyclerView(RoomRecyclerView)
 
+        start_game_btn.setOnClickListener {
+            myData.playerList = viewAdapter.player_list
+            myData.roomName = room_name
+            myData.player_number = player_number
+            myData.totalRound = betting_rounds
+            myData.start_player = 0
+            myData.pool = 0
+            myData.toCall = 0
+            myData.turn = 0
+            myData.yourId = "host"
+            broadcast_updated_roominfo(PayloadData.Action.START_GAME)
+            startActivity(Intent(this, BettingActivity::class.java))
+        }
         set_initial_budget.setOnClickListener {
             MaterialDialog.Builder(this)
                 .title("초기 자금 설정")
@@ -270,13 +293,15 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
         val oos = ObjectOutputStream(bos)
         val data = PayloadData()
         data.flag = flag
-        data.playerList = viewAdapter.player_list
+        data.playerList = ArrayList(viewAdapter.player_list)
+        if (viewAdapter.player_list.isNullOrEmpty()) Log.wtf(TAG, "player list null or empty!")
         data.player_number = player_number
         data.totalRound = betting_rounds
         data.roomName = room_name
         data.pool = 0
         data.turn = 0
         data.toCall = 0
+        data.start_player = 0
         data.yourId = endpointId
         oos.writeObject(data)
         oos.flush()

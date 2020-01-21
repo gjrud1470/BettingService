@@ -8,9 +8,6 @@ import java.util.ArrayList;
 
 public class PayloadData implements Serializable {
 
-    public PayloadData() {
-    }
-
     public Action getFlag() {
         return flag;
     }
@@ -19,12 +16,25 @@ public class PayloadData implements Serializable {
         this.flag = flag;
     }
 
+    public Integer getRoundNum() {
+        return roundNum;
+    }
+
+    public void setRoundNum(Integer roundNum) {
+        this.roundNum = roundNum;
+    }
+
     public enum Action {
         ENTER_ROOM_INFO,
         UPDATE_ROOM,
         UPDATE_USER_BUDGET,
         START_GAME,
-        UPDATE_GAME
+        UPDATE_GAME,
+        SEND_BET_INFO,
+        USER_FOLD,
+        BROADCAST_WINNER,
+        USER_LEFT,
+        BROADCAST_GAME_WINNER
     }
 
     // From Host to Client
@@ -37,9 +47,11 @@ public class PayloadData implements Serializable {
     private Integer totalRound;
     private String yourId;
     private String roomName;
+    private Integer roundNum = 1;
 
     // From Client to Host
     private Integer user_initial_budget;
+    private Integer bet;
 
     private Action flag;
 
@@ -113,4 +125,8 @@ public class PayloadData implements Serializable {
     public Integer getStart_player() { return start_player; }
 
     public void setStart_player(Integer start_player) { this.start_player = start_player; }
+
+    public Integer getBet() { return bet; }
+
+    public void setBet(Integer bet) { this.bet = bet; }
 }
