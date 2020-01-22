@@ -38,7 +38,7 @@
             android:layout_marginBottom="8dp"
             android:inputType="numberDecimal"
             android:textSize="20dp"
-            android:hint="플레이어 수 (5명 이하)" />
+            android:hint="플레이어 수 (7명 이하)" />
 
         <EditText
             android:id="@+id/input_betting_round"

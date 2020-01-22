@@ -200,8 +200,8 @@ class HostRoomActivity : AppCompatActivity(), RoomRecyclerAdapter.itemDragListen
                         Toast.makeText(this, "새로운 플레이어 수는 현재 플레이어 수보다 커야 합니다.", Toast.LENGTH_SHORT).show()
                     }
                     else if (input_player_number.text.toString().isNotEmpty()
-                        && input_player_number.text.toString().toInt() > 5) {
-                        Toast.makeText(this, "플레이어수는 5명 이하이여야 합니다.", Toast.LENGTH_SHORT).show()
+                        && input_player_number.text.toString().toInt() > 7) {
+                        Toast.makeText(this, "플레이어수는 7명 이하이여야 합니다.", Toast.LENGTH_SHORT).show()
                     }
 
                     broadcast_updated_roominfo(PayloadData.Action.UPDATE_ROOM)

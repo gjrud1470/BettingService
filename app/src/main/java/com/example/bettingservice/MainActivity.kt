@@ -63,8 +63,8 @@ class MainActivity : AppCompatActivity() {
                         else if (input_player_number.text.toString().isEmpty()) {
                             Toast.makeText(this, "플레이어 수를 입력해주세요.", Toast.LENGTH_SHORT).show()
                         }
-                        else if (input_player_number.text.toString().toInt() > 5) {
-                            Toast.makeText(this, "플레이어수는 5명 이하이여야 합니다.", Toast.LENGTH_SHORT).show()
+                        else if (input_player_number.text.toString().toInt() > 7) {
+                            Toast.makeText(this, "플레이어수는 7명 이하이여야 합니다.", Toast.LENGTH_SHORT).show()
                         }
                         else if (input_betting_round.text.toString().isEmpty()) {
                             Toast.makeText(this, "베팅 라운드 수를 입력해주세요.", Toast.LENGTH_SHORT).show()
